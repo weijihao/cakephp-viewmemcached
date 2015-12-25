@@ -110,10 +110,10 @@ server {
         add_header Content-Encoding gzip;
         memcached_pass upstream_memcached;
         default_type text/html;
-        error_page 404 405 502 504 = @backend;
+        error_page 404 405 502 504 = @fallback;
     }
 
-    location @backend {
+    location @fallback {
         proxy_pass http://upstream_backend;
     }
 }
