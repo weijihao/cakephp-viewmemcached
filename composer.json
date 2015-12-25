@@ -1,0 +1,36 @@
+{
+    "name": "chnvcode/cakephp-viewmemcached",
+    "description": "ViewMemcached plugin for CakePHP",
+    "license": "MIT",
+    "type": "cakephp-plugin",
+    "keywords": [
+        "cakephp",
+        "view",
+        "memcached"
+    ],
+    "homepage": "https://github.com/chnvcode/cakephp-viewmemcached",
+    "authors": [
+        {
+            "name": "chnvcode",
+            "email": "chnvcode@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ViewMemcached\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ViewMemcached\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}
