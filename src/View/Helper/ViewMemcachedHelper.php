@@ -8,8 +8,8 @@
  */
 namespace ViewMemcached\View\Helper;
 
-use Cake\Core\Configure;
 use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -55,13 +55,13 @@ class ViewMemcachedHelper extends Helper
      * @param Event $view Event
      * @param string $layoutFile rendered layout file name
      *
-     * @return boolean true
+     * @return bool true
      */
     public function afterLayout(Event $event, $layoutFile)
     {
         if (!$this->enabled()) {
-			return true;
-		}
+            return true;
+        }
 
         $content = $this->_View->Blocks->get('content');
         if ($this->config('gzip')) {
@@ -79,7 +79,7 @@ class ViewMemcachedHelper extends Helper
     /**
      * Return Enabled Value
      *
-     * @return boolean
+     * @return bool
      */
     public function enabled()
     {

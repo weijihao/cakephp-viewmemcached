@@ -8,13 +8,13 @@
  */
 namespace ViewMemcached\Test\TestCase\View\Helper;
 
-use ViewMemcached\View\Helper\ViewMemcachedHelper;
-use Cake\Core\Configure;
-use Cake\View\View;
 use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use Cake\View\View;
+use ViewMemcached\View\Helper\ViewMemcachedHelper;
 
 /**
  * ViewMemcached\View\Helper\ViewMemcachedHelper Test Case
