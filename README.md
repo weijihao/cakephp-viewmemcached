@@ -1,4 +1,6 @@
-# ViewMemcached plugin for CakePHP 3.X
+# ViewMemcached plugin for CakePHP 3.x
+
+[![Build Status](https://travis-ci.org/chnvcode/cakephp-viewmemcached.svg?branch=master)](https://travis-ci.org/chnvcode/cakephp-viewmemcached)
 
 Speed up your CakePHP application by view caching with Memcached and Nginx.
 
@@ -25,11 +27,11 @@ Add a new cache adapter `Cache.view_memcached` by editing the file `config/app.p
 ]
 ```
 
-## How To Use
+## How to Use
 
 Load the plugin helper from `AppController` (or any other controller you want):
 
-#### Load helper with default options
+### Load helper with default options
 
 ```
 public function beforeRender(Event $event)
@@ -49,7 +51,7 @@ Default options:
 ]
 ```
 
-#### Load helper with custom options
+### Load helper with custom options
 
 ```
 public function beforeRender(Event $event)
@@ -62,7 +64,7 @@ public function beforeRender(Event $event)
 }
 ```
 
-#### Load helper conditionally
+### Load helper conditionally
 
 ```
 public function beforeRender(Event $event)
@@ -108,10 +110,10 @@ server {
         add_header Content-Encoding gzip;
         memcached_pass upstream_memcached;
         default_type text/html;
-        error_page 404 405 502 504 = @backend;
+        error_page 404 405 502 504 = @fallback;
     }
 
-    location @backend {
+    location @fallback {
         proxy_pass http://upstream_backend;
     }
 }
