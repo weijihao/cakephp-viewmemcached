@@ -72,6 +72,7 @@ Configure::write('Session', [
     'defaults' => 'php'
 ]);
 
+define('TEST_CACHE_CONFIG', 'view_memcached_test');
 Cache::config([
     '_cake_core_' => [
         'engine' => 'File',
@@ -83,7 +84,7 @@ Cache::config([
         'prefix' => 'default_',
         'serialize' => true
     ],
-    'view_memcached' => [
+    TEST_CACHE_CONFIG => [
         'className' => 'ViewMemcached.ViewMemcached',
         'prefix' => '',
         'duration' => '+30 seconds',
