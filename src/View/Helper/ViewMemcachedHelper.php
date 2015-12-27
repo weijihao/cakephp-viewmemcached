@@ -78,11 +78,9 @@ class ViewMemcachedHelper extends Helper
         if ($this->_View->get(ViewMemcachedHelper::FORCE_UPDATE) === true) {
             Cache::delete($this->config('cacheKey'), $this->config('cacheConfig'));
         }
-
         if (!$this->_enabled) {
             return true;
         }
-
         try {
             $content = $this->_View->Blocks->get('content');
             if ($this->config('gzipCompress') === true) {
