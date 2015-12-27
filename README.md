@@ -26,12 +26,13 @@ Configure one or more cache adapter(s) as your need by editing the file `config/
 ```
 'view_memcached' => [
     'className' => 'ViewMemcached.ViewMemcached',
-    'prefix' => 'example.com',
+    'compress' => false,
     'duration' => '+12 hours',
-    'compress' => false
+    'prefix' => 'example.com'
 ]
 ```
-NOTE: The value for option `compress` must be `false` to turn off default compression and use Gzip from the helper instead.
+
+The value for option `compress` must be `false` to use gzip compression from this plugin instead.
 
 ## Using Plugin
 
