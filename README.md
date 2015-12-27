@@ -45,9 +45,9 @@ Default options:
 
 ```
 [
-    'gzip' => true,
-    'gzip_compress_level' => 6,
-    'cache_config' => 'view_memcached'
+    'cacheConfig' => 'view_memcached',
+    'gzipCompress' => true,
+    'gzipCompressLevel' => 6
 ]
 ```
 
@@ -60,14 +60,14 @@ public function beforeRender(Event $event)
 
     if ($this->request->action === 'index') {
         $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached' => [
-                'cache_config' => 'view_memcache_short'
+                'cacheConfig' => 'view_memcache_short'
             ]
         ]);
     }
 
     if ($this->request->action === 'view') {
         $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached' => [
-                'cache_config' => 'view_memcache_long'
+                'cacheConfig' => 'view_memcache_long'
             ]
         ]);
     }
