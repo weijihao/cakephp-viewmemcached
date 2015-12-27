@@ -28,13 +28,20 @@ class ViewMemcachedHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
         Cache::enable();
+
         $request = new Request();
         $request->env('REQUEST_METHOD', 'GET');
-        $request->here = '/pages/test';
+        $request->here = '/pages/home';
         $response = new Response();
         $this->View = new View($request, $response);
-        $this->View->loadHelper('ViewMemcached.ViewMemcached');
+
+        $options = ['cacheConfig' => TEST_CACHE_CONFIG];
+        $this->View->loadHelper('ViewMemcached.ViewMemcached', $options);
+        if ($this->View->ViewMemcached !== null) {
+            $this->helper = $this->View->ViewMemcached;
+        }
     }
 
     /**
@@ -44,7 +51,7 @@ class ViewMemcachedHelperTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->View);
+        unset($this->View, $this->helper);
         parent::tearDown();
     }
 
@@ -53,16 +60,16 @@ class ViewMemcachedHelperTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultOptions()
+    public function testConfig()
     {
-        $result = $this->View->ViewMemcached->config('gzip');
+        $result = $this->helper->config('gzip');
         $this->assertTextEquals(true, $result);
 
-        $result = $this->View->ViewMemcached->config('gzip_compress_level');
+        $result = $this->helper->config('gzipCompressLevel');
         $this->assertTextEquals(6, $result);
 
-        $result = $this->View->ViewMemcached->config('cache_config');
-        $this->assertTextEquals('view_memcached', $result);
+        $result = $this->helper->config('cacheConfig');
+        $this->assertTextEquals(TEST_CACHE_CONFIG, $result);
     }
 
     /**
@@ -104,17 +111,15 @@ class ViewMemcachedHelperTest extends TestCase
      */
     public function testGzipOn()
     {
-        $options = $this->View->ViewMemcached->config();
-        $cacheConfig = $options['cache_config'];
-        $compressLevel = $options['gzip_compress_level'];
-        $cacheKey = $this->View->request->here;
+        $options = $this->helper->config();
+        $cacheConfig = $options['cacheConfig'];
+        $compressLevel = $options['gzipCompressLevel'];
+        $cacheKey = $this->helper->config('cacheKey');
         Cache::delete($cacheKey, $cacheConfig);
 
         $this->View->viewPath = 'Pages';
         $this->View->set('test', 'gzip on');
         $content = $this->View->render('home', 'default');
-        $this->assertTextEquals('Rendered with default layout: gzip on', $content);
-
         $compressedContent = gzencode($content, $compressLevel);
         $cache = Cache::read($cacheKey, $cacheConfig);
         $this->assertTrue($cache === $compressedContent);
@@ -127,16 +132,35 @@ class ViewMemcachedHelperTest extends TestCase
      */
     public function testGzipOff()
     {
-        $this->View->ViewMemcached->config('gzip', false);
-        $cacheConfig = $this->View->ViewMemcached->config('cache_config');
-        $cacheKey = $this->View->request->here;
+        $this->helper->config('gzip', false);
+        $cacheConfig = $this->helper->config('cacheConfig');
+        $cacheKey = $this->helper->config('cacheKey');
         Cache::delete($cacheKey, $cacheConfig);
 
         $this->View->viewPath = 'Pages';
         $this->View->set('test', 'gzip off');
         $content = $this->View->render('home', 'default');
-        $this->assertTextEquals('Rendered with default layout: gzip off', $content);
+        $cache = Cache::read($cacheKey, $cacheConfig);
+        $this->assertTrue($cache === $content);
+    }
 
+    /**
+     * testForceUpdate method
+     *
+     * @return void
+     */
+    public function testForceUpdate()
+    {
+        $this->helper->config('gzip', false);
+
+        $cacheConfig = $this->helper->config('cacheConfig');
+        $cacheKey = $this->helper->config('cacheKey');
+        Cache::write($cacheKey, 'old view cache', $cacheConfig);
+
+        $this->View->viewPath = 'Pages';
+        $this->View->set(ViewMemcachedHelper::FORCE_UPDATE, true);
+        $this->View->set('test', 'force update');
+        $content = $this->View->render('home', 'default');
         $cache = Cache::read($cacheKey, $cacheConfig);
         $this->assertTrue($cache === $content);
     }
