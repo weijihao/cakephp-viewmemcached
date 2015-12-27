@@ -43,6 +43,15 @@ public function beforeRender(Event $event)
     $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached']);
 }
 ```
+### Configurable options for the helper
+
+```
+[
+    'cacheConfig' => 'view_memcached',
+    'gzipCompress' => true,
+    'gzipCompressLevel' => 6
+]
+```
 
 ### Load the helper conditionally
 
