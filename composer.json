@@ -5,8 +5,10 @@
     "type": "cakephp-plugin",
     "keywords": [
         "cakephp",
-        "view",
-        "memcached"
+        "memcached",
+        "viewmemcached",
+        "view cache",
+        "view caching"
     ],
     "homepage": "https://github.com/chnvcode/cakephp-viewmemcached",
     "authors": [

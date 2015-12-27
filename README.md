@@ -14,9 +14,14 @@ The recommended way to install composer packages is:
 composer require chnvcode/cakephp-viewmemcached
 ```
 
-## Cache Configuration
+## Requirements
 
-Add a new cache adapter `Cache.view_memcached` by editing the file `config/app.php`:
+* CakePHP 3.x
+* PHP5.4+ with Memcached module
+
+## Configuration
+
+Configure one or more cache adapter(s) as your need by editing the file `config/app.php`.
 
 ```
 'view_memcached' => [
@@ -27,11 +32,9 @@ Add a new cache adapter `Cache.view_memcached` by editing the file `config/app.p
 ]
 ```
 
-## How to Use
+## Using Plugin
 
-Load the plugin helper from `AppController` (or any other controller you want):
-
-### Load the helper with default options
+Simply load the helper from any controller you want, that's all.
 
 ```
 public function beforeRender(Event $event)
@@ -40,8 +43,7 @@ public function beforeRender(Event $event)
     $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached']);
 }
 ```
-
-Default options:
+### Configurable options for the helper
 
 ```
 [
@@ -70,6 +72,39 @@ public function beforeRender(Event $event)
                 'cacheConfig' => 'view_memcache_long'
             ]
         ]);
+    }
+}
+```
+### Refresh a view cache manually
+
+To refresh a view cache manually, simply set the view variable `ViewMemcachedHelper::FORCE_UPDATE` to `true` from a controller action.
+This will delete the old cache and generate a new one when the next GET request is made.
+
+Sample code:
+
+```
+<?php
+namespace App\Controller;
+
+use Cake\Event\Event;
+use ViewMemcached\View\Helper\ViewMemcachedHelper;
+
+class ArticlesController extends AppController
+{
+    public function beforeRender(Event $event)
+    {
+        parent::beforeRender($event);
+        $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached']);
+    }    
+
+    public function view($slug)
+    { 
+        if ($this->request->is('post')) {
+            // do something
+
+            $this->set(ViewMemcachedHelper::FORCE_UPDATE, true);
+        }
+        ...
     }
 }
 ```
