@@ -42,9 +42,9 @@ class ViewMemcachedHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'gzip' => true,
-        'gzipCompressLevel' => 6,
-        'cacheConfig' => 'view_memcached'
+        'cacheConfig' => 'view_memcached',
+        'gzipCompress' => true,
+        'gzipCompressLevel' => 6
     ];
 
     /**
@@ -81,7 +81,7 @@ class ViewMemcachedHelper extends Helper
         if ($this->_enabled) {
             try {
                 $content = $this->_View->Blocks->get('content');
-                if ($this->config('gzip') === true) {
+                if ($this->config('gzipCompress') === true) {
                     $content = gzencode($content, intval($this->config('gzipCompressLevel')));
                 }
                 Cache::write($this->config('cacheKey'), $content, $this->config('cacheConfig'));

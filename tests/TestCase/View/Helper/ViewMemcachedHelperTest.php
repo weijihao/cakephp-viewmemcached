@@ -62,7 +62,7 @@ class ViewMemcachedHelperTest extends TestCase
      */
     public function testConfig()
     {
-        $result = $this->helper->config('gzip');
+        $result = $this->helper->config('gzipCompress');
         $this->assertTextEquals(true, $result);
 
         $result = $this->helper->config('gzipCompressLevel');
@@ -132,7 +132,7 @@ class ViewMemcachedHelperTest extends TestCase
      */
     public function testGzipOff()
     {
-        $this->helper->config('gzip', false);
+        $this->helper->config('gzipCompress', false);
         $cacheConfig = $this->helper->config('cacheConfig');
         $cacheKey = $this->helper->config('cacheKey');
         Cache::delete($cacheKey, $cacheConfig);
@@ -151,7 +151,7 @@ class ViewMemcachedHelperTest extends TestCase
      */
     public function testForceUpdate()
     {
-        $this->helper->config('gzip', false);
+        $this->helper->config('gzipCompress', false);
 
         $cacheConfig = $this->helper->config('cacheConfig');
         $cacheKey = $this->helper->config('cacheKey');
