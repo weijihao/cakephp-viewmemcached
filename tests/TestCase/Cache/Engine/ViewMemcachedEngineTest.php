@@ -8,11 +8,7 @@
  */
 namespace ViewMemcached\Test\TestCase\Cache\Engine;
 
-use Cake\Core\Cache;
-use Cake\Core\Configure;
-use Cake\Event\Event;
 use Cake\TestSuite\TestCase;
-use Cake\View\View;
 use ViewMemcached\Cache\Engine\ViewMemcachedEngine;
 
 /**

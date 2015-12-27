@@ -9,7 +9,6 @@
 namespace ViewMemcached\Test\TestCase\View\Helper;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -29,7 +28,7 @@ class ViewMemcachedHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('Cache.disable', false);
+        Cache::enable();
         $request = new Request();
         $request->env('REQUEST_METHOD', 'GET');
         $request->here = '/pages/test';
@@ -73,10 +72,10 @@ class ViewMemcachedHelperTest extends TestCase
      */
     public function testConstructor()
     {
-        Configure::write('Cache.disable', true);
+        Cache::disable();
         $result = $this->_testHelperEnabled();
         $this->assertEquals(false, $result);
-        Configure::write('Cache.disable', false);
+        Cache::enable();
 
         $methods = ['POST', 'HEAD', 'PUT', 'DELETE', 'PATCH'];
         foreach ($methods as $method) {
