@@ -88,7 +88,7 @@ Cache::config([
         'className' => 'ViewMemcached.ViewMemcached',
         'prefix' => '',
         'duration' => '+30 seconds',
-        'options' => [\Memcached::OPT_COMPRESSION => false]
+        'compress' => false
     ],
 ]);
 

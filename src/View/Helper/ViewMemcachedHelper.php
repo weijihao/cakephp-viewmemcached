@@ -78,16 +78,17 @@ class ViewMemcachedHelper extends Helper
         if ($this->_View->get(ViewMemcachedHelper::FORCE_UPDATE) === true) {
             Cache::delete($this->config('cacheKey'), $this->config('cacheConfig'));
         }
-        if ($this->_enabled) {
-            try {
-                $content = $this->_View->Blocks->get('content');
-                if ($this->config('gzipCompress') === true) {
-                    $content = gzencode($content, intval($this->config('gzipCompressLevel')));
-                }
-                Cache::write($this->config('cacheKey'), $content, $this->config('cacheConfig'));
-            } catch (Exception $e) {
-                Log::error($e->getMessage());
+        if (!$this->_enabled) {
+            return true;
+        }
+        try {
+            $content = $this->_View->Blocks->get('content');
+            if ($this->config('gzipCompress') === true) {
+                $content = gzencode($content, intval($this->config('gzipCompressLevel')));
             }
+            Cache::write($this->config('cacheKey'), $content, $this->config('cacheConfig'));
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
         }
         return true;
     }
