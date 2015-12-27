@@ -9,7 +9,9 @@
 namespace ViewMemcached\View\Helper;
 
 use Cake\Cache\Cache;
+use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
+use Cake\Log\Log;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -19,16 +21,30 @@ use Cake\View\View;
  */
 class ViewMemcachedHelper extends Helper
 {
-    private $_enabled = true;
+
+    /**
+     * Constant for 'viewmemcached_force_update'
+     *
+     * @var string
+     */
+    const FORCE_UPDATE = 'view_memcached_force_update';
+
+    /**
+     * Variable for view caching
+     *
+     * @var bool
+     */
+    protected $_enabled = true;
+
     /**
      * Default configuration.
      *
      * @var array
      */
     protected $_defaultConfig = [
-        'gzip' => true,
-        'gzip_compress_level' => 6,
-        'cache_config' => 'view_memcached'
+        'cacheConfig' => 'view_memcached',
+        'gzipCompress' => true,
+        'gzipCompressLevel' => 6
     ];
 
     /**
@@ -46,10 +62,11 @@ class ViewMemcachedHelper extends Helper
         if (!Cache::enabled() || !$this->request->is('get')) {
             $this->_enabled = false;
         }
+        $this->config('cacheKey', $this->request->here);
     }
 
     /**
-     * After layout callback
+     * Callback for Helper::afterLayout
      *
      * @param Event $view Event
      * @param string $layoutFile rendered layout file name
@@ -58,25 +75,25 @@ class ViewMemcachedHelper extends Helper
      */
     public function afterLayout(Event $event, $layoutFile)
     {
-        if (!$this->enabled()) {
-            return true;
+        if ($this->_View->get(ViewMemcachedHelper::FORCE_UPDATE) === true) {
+            Cache::delete($this->config('cacheKey'), $this->config('cacheConfig'));
         }
-
-        $content = $this->_View->Blocks->get('content');
-        if ($this->config('gzip')) {
-            $content = gzencode($content, $this->config('gzip_compress_level'));
-        }
-
-        $key = $this->request->here;
-        $config = $this->config('cache_config');
-        if (Cache::read($key, $config) === false) {
-            Cache::write($key, $content, $config);
+        if ($this->_enabled) {
+            try {
+                $content = $this->_View->Blocks->get('content');
+                if ($this->config('gzipCompress') === true) {
+                    $content = gzencode($content, intval($this->config('gzipCompressLevel')));
+                }
+                Cache::write($this->config('cacheKey'), $content, $this->config('cacheConfig'));
+            } catch (Exception $e) {
+                Log::error($e->getMessage());
+            }
         }
         return true;
     }
 
     /**
-     * Return Enabled Value
+     * Return value of property $_enabled
      *
      * @return bool
      */
