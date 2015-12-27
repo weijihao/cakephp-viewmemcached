@@ -9,7 +9,6 @@
 namespace ViewMemcached\View\Helper;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -44,7 +43,7 @@ class ViewMemcachedHelper extends Helper
     {
         parent::__construct($view, $config);
 
-        if (Configure::read('Cache.disable') || !$this->request->is('get')) {
+        if (!Cache::enabled() || !$this->request->is('get')) {
             $this->_enabled = false;
         }
     }
