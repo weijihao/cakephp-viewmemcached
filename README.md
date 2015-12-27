@@ -14,9 +14,9 @@ The recommended way to install composer packages is:
 composer require chnvcode/cakephp-viewmemcached
 ```
 
-## Cache Configuration
+## Configuration
 
-Add a new cache adapter `Cache.view_memcached` by editing the file `config/app.php`:
+Configure one or more cache adapter(s) as your need by editing the file `config/app.php`.
 
 ```
 'view_memcached' => [
@@ -27,11 +27,9 @@ Add a new cache adapter `Cache.view_memcached` by editing the file `config/app.p
 ]
 ```
 
-## How to Use
+## Using Plugin
 
-Load the plugin helper from `AppController` (or any other controller you want):
-
-### Load the helper with default options
+Simply load the helper from any controller you want, that's all.
 
 ```
 public function beforeRender(Event $event)
@@ -39,16 +37,6 @@ public function beforeRender(Event $event)
     parent::beforeRender($event);
     $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached']);
 }
-```
-
-Default options:
-
-```
-[
-    'cacheConfig' => 'view_memcached',
-    'gzipCompress' => true,
-    'gzipCompressLevel' => 6
-]
 ```
 
 ### Load the helper conditionally
@@ -73,7 +61,7 @@ public function beforeRender(Event $event)
     }
 }
 ```
-### Refresh a view cache
+### Refresh a view cache manually
 
 To refresh a view cache manually, simply set the view variable `ViewMemcachedHelper::FORCE_UPDATE` to `true` from a controller action.
 This will delete the old cache and generate a new one when the next GET request is made.
