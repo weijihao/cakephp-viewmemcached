@@ -19,7 +19,14 @@ use Cake\View\View;
  */
 class ViewMemcachedHelper extends Helper
 {
-    private $_enabled = true;
+
+    /**
+     * Variable for helper status
+     *
+     * @var bool
+     */
+    protected $_enabled = true;
+
     /**
      * Default configuration.
      *
@@ -58,7 +65,7 @@ class ViewMemcachedHelper extends Helper
      */
     public function afterLayout(Event $event, $layoutFile)
     {
-        if (!$this->enabled()) {
+        if (!$this->_enabled) {
             return true;
         }
 
