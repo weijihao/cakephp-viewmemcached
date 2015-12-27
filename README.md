@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/chnvcode/cakephp-viewmemcached.svg?branch=master)](https://travis-ci.org/chnvcode/cakephp-viewmemcached)
 
-Speed up your CakePHP application by view caching with Memcached and Nginx.
+Speed up CakePHP applications by view caching with Memcached and Nginx.
 
 ## Installation
 
@@ -21,7 +21,7 @@ Add a new cache adapter `Cache.view_memcached` by editing the file `config/app.p
 ```
 'view_memcached' => [
     'className' => 'ViewMemcached.ViewMemcached',
-    'prefix' => '',
+    'prefix' => 'example.com',
     'duration' => '+12 hours',
     'options' => [\Memcached::OPT_COMPRESSION => false]
 ]
@@ -31,7 +31,7 @@ Add a new cache adapter `Cache.view_memcached` by editing the file `config/app.p
 
 Load the plugin helper from `AppController` (or any other controller you want):
 
-### Load helper with default options
+### Load the helper with default options
 
 ```
 public function beforeRender(Event $event)
@@ -51,20 +51,7 @@ Default options:
 ]
 ```
 
-### Load helper with custom options
-
-```
-public function beforeRender(Event $event)
-{
-    parent::beforeRender($event);
-    $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached' => [
-            'gzip_compress_level' => 9,
-        ]
-    ]);
-}
-```
-
-### Load helper conditionally
+### Load the helper conditionally
 
 ```
 public function beforeRender(Event $event)
@@ -104,7 +91,7 @@ server {
     root /www/example.com/webroot/;
 
     location / {
-        set $memcached_key $request_uri;
+        set $memcached_key $server_name$request_uri;
         add_header X-Memcached-Key  $memcached_key;
         gzip off;
         add_header Content-Encoding gzip;
