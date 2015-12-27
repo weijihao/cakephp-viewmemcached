@@ -14,6 +14,11 @@ The recommended way to install composer packages is:
 composer require chnvcode/cakephp-viewmemcached
 ```
 
+## Requirements
+
+* CakePHP 3.x
+* PHP5.4+ with Memcached module
+
 ## Configuration
 
 Configure one or more cache adapter(s) as your need by editing the file `config/app.php`.
