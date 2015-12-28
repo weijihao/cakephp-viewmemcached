@@ -45,7 +45,7 @@ public function beforeRender(Event $event)
     $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached']);
 }
 ```
-### Configurable options for the helper
+### Configuration options
 
 ```
 [
@@ -77,39 +77,19 @@ public function beforeRender(Event $event)
     }
 }
 ```
-### Refresh a view cache manually
-
-To refresh a view cache manually, simply set the view variable `ViewMemcachedHelper::FORCE_UPDATE` to `true` from a controller action.
-This will delete the old cache and generate a new one when the next GET request is made.
-
-Sample code:
+### View variables
 
 ```
-<?php
-namespace App\Controller;
-
-use Cake\Event\Event;
-use ViewMemcached\View\Helper\ViewMemcachedHelper;
-
-class ArticlesController extends AppController
-{
-    public function beforeRender(Event $event)
-    {
-        parent::beforeRender($event);
-        $this->viewBuilder()->helpers(['ViewMemcached.ViewMemcached']);
-    }    
-
-    public function view($slug)
-    { 
-        if ($this->request->is('post')) {
-            // do something
-
-            $this->set(ViewMemcachedHelper::FORCE_UPDATE, true);
-        }
-        ...
-    }
-}
+$this->set(ViewMemcachedHelper::DELETE, true);
 ```
+
+This will delete the cache.
+
+```
+$this->set(ViewMemcachedHelper::NOCACHE, true);
+```
+
+This will disable view caching.
 
 ## Nginx Sample Configuration
 
