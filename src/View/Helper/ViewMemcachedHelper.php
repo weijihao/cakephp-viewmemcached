@@ -12,6 +12,7 @@ use Cake\Cache\Cache;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -23,18 +24,18 @@ class ViewMemcachedHelper extends Helper
 {
 
     /**
-     * Constant for 'viewmemcached_force_update'
+     * Constant for 'viewMemcachedNocache'
      *
      * @var string
      */
-    const FORCE_UPDATE = 'view_memcached_force_update';
+    const NOCACHE = 'viewMemcachedNocache';
 
     /**
-     * Variable for view caching
+     * Constant for 'viewMemcachedDelete'
      *
-     * @var bool
+     * @var string
      */
-    protected $_enabled = true;
+    const DELETE = 'viewMemcachedDelete';
 
     /**
      * Default configuration.
@@ -42,6 +43,8 @@ class ViewMemcachedHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
+        'disable' => false,
+        'cacheKey' => null,
         'cacheConfig' => 'view_memcached',
         'gzipCompress' => true,
         'gzipCompressLevel' => 6
@@ -59,10 +62,33 @@ class ViewMemcachedHelper extends Helper
     {
         parent::__construct($view, $config);
 
-        if (!Cache::enabled() || !$this->request->is('get')) {
-            $this->_enabled = false;
-        }
         $this->config('cacheKey', $this->request->here);
+    }
+
+    /**
+     * Callback for Helper::beforeRender
+     *
+     * @param Event $view Event
+     * @param string $layoutFile layout file name
+     *
+     * @return bool true
+     */
+    public function beforeLayout(Event $event, $layoutFile)
+    {
+        if (!Cache::enabled()) {
+            $this->config('disable', true);
+        } elseif (!$this->request->is('get')) {
+            $this->config('disable', true);
+        } elseif ($this->request->session()->check('Flash')) {
+            $this->config('disable', true);
+        } elseif ($this->_View->get(ViewMemcachedHelper::NOCACHE)) {
+            $this->config('disable', true);
+        }
+
+        if ($this->_View->get(ViewMemcachedHelper::DELETE) === true) {
+            Cache::delete($this->config('cacheKey'), $this->config('cacheConfig'));
+        }
+        return true;
     }
 
     /**
@@ -75,18 +101,21 @@ class ViewMemcachedHelper extends Helper
      */
     public function afterLayout(Event $event, $layoutFile)
     {
-        if ($this->_View->get(ViewMemcachedHelper::FORCE_UPDATE) === true) {
-            Cache::delete($this->config('cacheKey'), $this->config('cacheConfig'));
-        }
-        if (!$this->_enabled) {
+        if ($this->config('disable')) {
             return true;
         }
+
         try {
             $content = $this->_View->Blocks->get('content');
             if ($this->config('gzipCompress') === true) {
                 $content = gzencode($content, intval($this->config('gzipCompressLevel')));
             }
-            Cache::write($this->config('cacheKey'), $content, $this->config('cacheConfig'));
+
+            $cacheKey = $this->config('cacheKey');
+            $cacheConfig = $this->config('cacheConfig');
+            if (Cache::read($cacheKey, $cacheConfig) === false) {
+                Cache::write($cacheKey, $content, $cacheConfig);
+            }
         } catch (Exception $e) {
             Log::error($e->getMessage());
         }
@@ -94,12 +123,12 @@ class ViewMemcachedHelper extends Helper
     }
 
     /**
-     * Return value of property $_enabled
+     * Return caching status
      *
      * @return bool
      */
     public function enabled()
     {
-        return $this->_enabled;
+        return $this->config('disable') === false;
     }
 }
